@@ -1,0 +1,12 @@
+[package]
+name = "hrtb-lending-iterator"
+description = "Lending iterators based on generic associated types and higher-rank trait bounds"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/vigna/hrtb-lending-iterator-rs/"
+license = "Apache-2.0 OR LGPL-2.1-or-later"
+readme = "README.md"
+keywords = ["iterator"]
+categories = ["data-structures"]
+
+[dependencies]
