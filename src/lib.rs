@@ -20,3 +20,13 @@ pub use self::traits::IntoLendingIterator;
 pub use self::traits::Item;
 pub use self::traits::LendingIterator;
 pub use self::traits::LendingIteratorItem;
+
+#[macro_export]
+macro_rules! for_lend {
+    ($var:ident in $iter:expr => {$($tt:tt)*}) => {
+        let mut iter = $iter.into_lend_iter();
+        while let Some($var) = iter.next() {
+            $($tt)*
+        }
+    }
+}
