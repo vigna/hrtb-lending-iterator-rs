@@ -26,6 +26,6 @@ pub trait LendingIterator {
 }
 ```
 The previous design proved to be too restrictive, and would have made it impossible to
-write types such as `PermutedGraph` or `PairsGraph` in 
+write types such as `PermutedGraph` or `ArcListGraph` in 
 [the Rust port of webgraph](https://github.com/vigna/webgraph-rs/).
 
