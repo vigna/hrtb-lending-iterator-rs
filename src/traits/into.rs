@@ -6,13 +6,11 @@
 
 use crate::{LendingIterator, LendingIteratorItem};
 
-pub trait IntoLendingIterator {
-    /// The type of the elements being iterated over.
-    type Item;
+pub trait IntoLendingIterator: for<'a> LendingIteratorItem<'a> {
     /// Which kind of iterator are we turning this into?
-    type IntoIter<'b>: LendingIterator + for<'a> LendingIteratorItem<'a, T = Self::Item>
+    type IntoIter<'a>: LendingIterator
     where
-        Self: 'b;
+        Self: 'a;
 
     /// Creates an iterator from a value.
     fn into_lend_iter(&mut self) -> Self::IntoIter<'_>;
