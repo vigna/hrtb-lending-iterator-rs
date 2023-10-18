@@ -13,5 +13,15 @@ pub trait IntoLendingIterator: for<'a> LendingIteratorItem<'a> {
         Self: 'a;
 
     /// Creates an iterator from a value.
+    fn into_lend_iter(&self) -> Self::IntoIter<'_>;
+}
+
+pub trait IntoLendingIteratorMut: for<'a> LendingIteratorItem<'a> {
+    /// Which kind of iterator are we turning this into?
+    type IntoIter<'a>: LendingIterator
+    where
+        Self: 'a;
+
+    /// Creates an iterator from a value.
     fn into_lend_iter(&mut self) -> Self::IntoIter<'_>;
 }
