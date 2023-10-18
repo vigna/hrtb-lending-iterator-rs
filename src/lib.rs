@@ -16,6 +16,7 @@ pub use self::adapters::Inspect;
 pub use self::adapters::IntoIter;
 pub use self::adapters::TakeWhile;
 pub use self::traits::ExactSizeLendingIterator;
+pub use self::traits::IntoLendingIterator;
 pub use self::traits::Item;
 pub use self::traits::LendingIterator;
 pub use self::traits::LendingIteratorItem;
