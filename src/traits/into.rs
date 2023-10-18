@@ -7,9 +7,9 @@
 use crate::{LendingIterator, LendingIteratorItem};
 
 pub trait IntoLendingIterator {
-    type Item;
+    type Item<'b>;
     /// Which kind of iterator are we turning this into?
-    type IntoIter<'a>: LendingIterator + for<'b> LendingIteratorItem<'a, T = Self::Item>
+    type IntoIter<'a>: LendingIterator + for<'b> LendingIteratorItem<'b, T = Self::Item<'b>>
     where
         Self: 'a;
 
@@ -18,9 +18,9 @@ pub trait IntoLendingIterator {
 }
 
 pub trait IntoLendingIteratorMut: for<'a> LendingIteratorItem<'a> {
-    type Item;
+    type Item<'b>;
     /// Which kind of iterator are we turning this into?
-    type IntoIter<'a>: LendingIterator + for<'b> LendingIteratorItem<'a, T = Self::Item>
+    type IntoIter<'a>: LendingIterator + for<'b> LendingIteratorItem<'b, T = Self::Item<'b>>
     where
         Self: 'a;
 
