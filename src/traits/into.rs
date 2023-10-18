@@ -14,7 +14,7 @@ pub trait IntoLendingIterator {
         Self: 'a;
 
     /// Creates an iterator from a value.
-    fn into_lend_iter(&self) -> Self::IntoIter<'static>;
+    fn into_lend_iter(&self) -> Self::IntoIter<'_>;
 }
 
 pub trait IntoLendingIteratorMut: for<'a> LendingIteratorItem<'a> {
