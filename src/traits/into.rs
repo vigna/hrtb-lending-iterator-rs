@@ -8,7 +8,7 @@ use crate::{Item, LendingIterator, LendingIteratorItem};
 
 pub trait IntoLendingIterator {
     /// Which kind of iterator are we turning this into?
-    type IntoIter: LendingIterator + for<'a> LendingIteratorItem<'a>;
+    type IntoIter: LendingIterator;
 
     /// Creates an iterator from a value.
     fn into_lend_iter(self) -> Self::IntoIter;
