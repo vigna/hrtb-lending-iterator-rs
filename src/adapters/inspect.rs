@@ -11,7 +11,7 @@ use crate::{Item, LendingIterator, LendingIteratorItem};
 #[derive(Clone, Debug)]
 pub struct Inspect<I: LendingIterator, F>
 where
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type),
+    F: FnMut(&'_ <I as LendingIteratorItem>::Type),
 {
     pub(crate) iter: I,
     pub(crate) f: F,
@@ -27,7 +27,7 @@ where
 impl<I, F> LendingIterator for Inspect<I, F>
 where
     I: LendingIterator,
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type),
+    F: FnMut(&'_ <I as LendingIteratorItem>::Type),
 {
     fn next(&mut self) -> Option<Item<'_, Self>> {
         self.iter.next().map(|item| {

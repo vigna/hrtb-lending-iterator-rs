@@ -26,7 +26,7 @@ pub use self::traits::LendingIteratorItem;
 /// The syntax makes it possible to write loops such as
 /// ```ignore
 /// for_lend!{x in into_iter =>
-/// 	println!("{}", x);
+///     println!("{}", x);
 /// }
 /// ```
 #[macro_export]

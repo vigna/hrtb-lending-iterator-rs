@@ -63,7 +63,7 @@ use hrtb_lending_iterator::*;
 struct MockLendingIterator {}
 
 impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
-    type T = &'any str;
+    type Type = &'any str;
 }
 
 impl LendingIterator for MockLendingIterator {
@@ -74,7 +74,7 @@ impl LendingIterator for MockLendingIterator {
 
 fn read_lend_iter<L>(iter: L)
 where
-    L: LendingIterator + for<'any> LendingIteratorItem<'any, T = &'any str>,
+    L: LendingIterator + for<'any> LendingIteratorItem<'any, Type = &'any str>,
 {}
 
 fn test_mock_lend_iter(m: MockLendingIterator) {
@@ -91,7 +91,7 @@ use hrtb_lending_iterator::*;
 struct MockLendingIterator {}
 
 impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
-    type T = &'any str;
+    type Type = &'any str;
 }
 
 impl LendingIterator for MockLendingIterator {
@@ -103,7 +103,7 @@ impl LendingIterator for MockLendingIterator {
 fn read_lend_iter<L>(iter: L)
 where
     L: LendingIterator,
-    for<'any> <L as LendingIteratorItem<'any>>::T: AsRef<str>,
+    for<'any> <L as LendingIteratorItem<'any>>::Type: AsRef<str>,
 {}
 
 fn test_mock_lend_iter(m: MockLendingIterator) {
@@ -119,7 +119,7 @@ use hrtb_lending_iterator::*;
 struct MockLendingIterator {}
 
 impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
-    type T = &'any str;
+    type Type = &'any str;
 }
 
 impl LendingIterator for MockLendingIterator {
@@ -131,7 +131,7 @@ impl LendingIterator for MockLendingIterator {
 fn read_lend_iter<L>(iter: L)
 where
     L: LendingIterator,
-    for<'any> <L as LendingIteratorItem<'any>>::T: AsRef<str>,
+    for<'any> <L as LendingIteratorItem<'any>>::Type: AsRef<str>,
 {}
 
 fn test_mock_lend_iter(m: MockLendingIterator) {

@@ -9,9 +9,10 @@ use crate::{Item, LendingIterator, LendingIteratorItem};
 /// This struct is returned by [`LendingIterator::enumerate`]
 #[derive(Clone, Debug)]
 pub struct Enumerate<I> {
-    iter: I,
-    count: usize,
+    pub(crate) iter: I,
+    pub(crate) count: usize,
 }
+
 impl<I> Enumerate<I> {
     pub fn new(iter: I) -> Enumerate<I> {
         Enumerate { iter, count: 0 }

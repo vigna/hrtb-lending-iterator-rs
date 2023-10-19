@@ -12,7 +12,7 @@ use crate::{Item, LendingIterator, LendingIteratorItem};
 #[derive(Clone, Debug)]
 pub struct TakeWhile<I: LendingIterator, F>
 where
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
+    F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
 {
     pub(crate) iter: I,
     pub(crate) predicate: F,
@@ -29,7 +29,7 @@ where
 impl<I, F> LendingIterator for TakeWhile<I, F>
 where
     I: LendingIterator,
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
+    F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
 {
     fn next(&mut self) -> Option<Item<'_, Self>> {
         if self.ended {

@@ -12,7 +12,7 @@ use crate::adapters::*;
 ///
 /// Note that the trait specifies that `Self` must outlive `'any`
 /// in a way that is inherited by implementations.
-pub trait LendingIteratorItem<'any, WhereSelfOutlivesB = &'any Self> {
+pub trait LendingIteratorItem<'any, WhereSelfOutlivesAny = &'any Self> {
     type Type;
 }
 
@@ -116,6 +116,7 @@ pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
     fn to_owned(self) -> IntoOwned<Self>
     where
         Self: Sized,
+        for<'any> <Self as LendingIteratorItem<'any>>::Type: ToOwned,
     {
         IntoOwned(self)
     }
