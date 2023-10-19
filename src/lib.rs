@@ -52,8 +52,8 @@ fn test_macro() {
 
     struct MockLendingIterator {}
 
-    impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
-        type T = &'a str;
+    impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+        type Type = &'any str;
     }
 
     impl LendingIterator for MockLendingIterator {
@@ -69,8 +69,8 @@ fn test_macro() {
     }
 
     impl IntoLendingIterator for &Mock {
-        type IntoIter = MockLendingIterator;
-        fn into_lend_iter(self) -> Self::IntoIter {
+        type IntoLendIter = MockLendingIterator;
+        fn into_lend_iter(self) -> Self::IntoLendIter {
             self.iter()
         }
     }

@@ -13,7 +13,7 @@ pub struct IntoIter<I: ?Sized + LendingIterator>(pub I);
 
 impl<Item, I: ?Sized + LendingIterator> Iterator for IntoIter<I>
 where
-    for<'any> I: LendingIteratorItem<'any, T = Item>,
+    for<'any> I: LendingIteratorItem<'any, Type = Item>,
 {
     type Item = Item;
 

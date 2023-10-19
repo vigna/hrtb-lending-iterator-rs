@@ -12,24 +12,24 @@ use crate::{Item, LendingIterator, LendingIteratorItem};
 #[derive(Clone, Debug)]
 pub struct TakeWhile<I: LendingIterator, F>
 where
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::T) -> bool,
+    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
 {
     pub(crate) iter: I,
     pub(crate) predicate: F,
     pub(crate) ended: bool,
 }
 
-impl<'succ, I: LendingIterator, F> LendingIteratorItem<'succ> for TakeWhile<I, F>
+impl<'any, I: LendingIterator, F> LendingIteratorItem<'any> for TakeWhile<I, F>
 where
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::T) -> bool,
+    F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
 {
-    type T = <I as LendingIteratorItem<'succ>>::T;
+    type Type = <I as LendingIteratorItem<'any>>::Type;
 }
 
 impl<I, F> LendingIterator for TakeWhile<I, F>
 where
     I: LendingIterator,
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::T) -> bool,
+    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type) -> bool,
 {
     fn next(&mut self) -> Option<Item<'_, Self>> {
         if self.ended {

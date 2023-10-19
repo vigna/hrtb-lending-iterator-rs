@@ -1,4 +1,4 @@
-## A lending iterator based on generic associated types and higher-rank trait bounds
+## A lending iterator based on generic associated types and higher-rank trait bounds (HRTBs)
 
 A *lending iterator* is an iterator which lends mutable borrows to the items it returns.
 In particular, this means that the reference to an item is invalidated by the 
@@ -21,7 +21,7 @@ the discussion, providing information and code.
 Note that the design is significantly more complex than the “obvious” lending iterator
 ```rust
 pub trait LendingIterator {
-    type Item<'b> where Self: 'b;
+    type Item<'a> where Self: 'a;
     fn next(&mut self) -> Option<Self::Item<'_>>;
 }
 ```
@@ -29,7 +29,7 @@ The previous design proved to be too restrictive, and would have made it impossi
 write types such as `PermutedGraph` or `ArcListGraph` in 
 [the Rust port of webgraph](https://github.com/vigna/webgraph-rs/).
 
-Similarly to what happens with standard iterator, there is a [`IntoLendingIterator`] trait
+Similarly to what happens with standard iterators, there is a [`IntoLendingIterator`] trait
 and methods such as [`LendingIterator::map`]. Our aim is to have a library as complete as that
 of standard iterators, but there is still a lot of work to do.
 
@@ -62,8 +62,8 @@ use hrtb_lending_iterator::*;
 
 struct MockLendingIterator {}
 
-impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
-    type T = &'a str;
+impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+    type T = &'any str;
 }
 
 impl LendingIterator for MockLendingIterator {
@@ -74,7 +74,7 @@ impl LendingIterator for MockLendingIterator {
 
 fn read_lend_iter<L>(iter: L)
 where
-    L: LendingIterator + for<'a> LendingIteratorItem<'a, T = &'a str>,
+    L: LendingIterator + for<'any> LendingIteratorItem<'any, T = &'any str>,
 {}
 
 fn test_mock_lend_iter(m: MockLendingIterator) {
@@ -90,8 +90,8 @@ use hrtb_lending_iterator::*;
 
 struct MockLendingIterator {}
 
-impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
-    type T = &'a str;
+impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+    type T = &'any str;
 }
 
 impl LendingIterator for MockLendingIterator {
@@ -103,7 +103,7 @@ impl LendingIterator for MockLendingIterator {
 fn read_lend_iter<L>(iter: L)
 where
     L: LendingIterator,
-    for<'a> <L as LendingIteratorItem<'a>>::T: AsRef<str>,
+    for<'any> <L as LendingIteratorItem<'any>>::T: AsRef<str>,
 {}
 
 fn test_mock_lend_iter(m: MockLendingIterator) {
@@ -118,8 +118,8 @@ use hrtb_lending_iterator::*;
 
 struct MockLendingIterator {}
 
-impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
-    type T = &'a str;
+impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+    type T = &'any str;
 }
 
 impl LendingIterator for MockLendingIterator {
@@ -131,7 +131,7 @@ impl LendingIterator for MockLendingIterator {
 fn read_lend_iter<L>(iter: L)
 where
     L: LendingIterator,
-    for<'a> <L as LendingIteratorItem<'a>>::T: AsRef<str>,
+    for<'any> <L as LendingIteratorItem<'any>>::T: AsRef<str>,
 {}
 
 fn test_mock_lend_iter(m: MockLendingIterator) {

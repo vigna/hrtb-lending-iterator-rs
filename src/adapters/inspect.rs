@@ -11,23 +11,23 @@ use crate::{Item, LendingIterator, LendingIteratorItem};
 #[derive(Clone, Debug)]
 pub struct Inspect<I: LendingIterator, F>
 where
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::T),
+    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type),
 {
     pub(crate) iter: I,
     pub(crate) f: F,
 }
 
-impl<'succ, I: LendingIterator, F> LendingIteratorItem<'succ> for Inspect<I, F>
+impl<'any, I: LendingIterator, F> LendingIteratorItem<'any> for Inspect<I, F>
 where
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::T),
+    F: FnMut(&'_ <I as LendingIteratorItem>::Type),
 {
-    type T = <I as LendingIteratorItem<'succ>>::T;
+    type Type = <I as LendingIteratorItem<'any>>::Type;
 }
 
 impl<I, F> LendingIterator for Inspect<I, F>
 where
     I: LendingIterator,
-    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::T),
+    for<'any> F: FnMut(&'_ <I as LendingIteratorItem>::Type),
 {
     fn next(&mut self) -> Option<Item<'_, Self>> {
         self.iter.next().map(|item| {

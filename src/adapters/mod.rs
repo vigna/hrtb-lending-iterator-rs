@@ -18,3 +18,6 @@ pub use enumerate::Enumerate;
 
 mod map;
 pub use map::Map;
+
+mod into_owned;
+pub use into_owned::IntoOwned;

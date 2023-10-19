@@ -18,8 +18,8 @@ impl<I> Enumerate<I> {
     }
 }
 
-impl<'succ, I: LendingIterator> LendingIteratorItem<'succ> for Enumerate<I> {
-    type T = (usize, <I as LendingIteratorItem<'succ>>::T);
+impl<'any, I: LendingIterator> LendingIteratorItem<'any> for Enumerate<I> {
+    type Type = (usize, <I as LendingIteratorItem<'any>>::Type);
 }
 
 impl<I: LendingIterator> LendingIterator for Enumerate<I> {

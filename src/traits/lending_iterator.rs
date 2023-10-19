@@ -6,18 +6,18 @@
  * SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1-or-later
  */
 
-use crate::adapters::{Enumerate, Inspect, IntoIter, Map, TakeWhile};
+use crate::adapters::*;
 
 /// A trait specifying the type of the items of a [LendingIterator].
 ///
-/// Note that the trait specifies that `Self` must outlive `'b`
+/// Note that the trait specifies that `Self` must outlive `'any`
 /// in a way that is inherited by implementations.
-pub trait LendingIteratorItem<'b, WhereSelfOutlivesB = &'b Self> {
-    type T;
+pub trait LendingIteratorItem<'any, WhereSelfOutlivesB = &'any Self> {
+    type Type;
 }
 
 /// A readable shorthand for the type of the items of a [`LendingIterator`] `I`.
-pub type Item<'a, I> = <I as LendingIteratorItem<'a>>::T;
+pub type Item<'any, I> = <I as LendingIteratorItem<'any>>::Type;
 
 /// The main trait: an iterator that borrows its items mutably from
 /// `self`, which implies that you cannot own at the same time two returned
@@ -25,7 +25,7 @@ pub type Item<'a, I> = <I as LendingIteratorItem<'a>>::T;
 ///
 /// The trait depends on the trait [LendingIteratorItem], which specifies the
 /// type of items returned by the iterator, via higher-kind trait bounds.
-pub trait LendingIterator: for<'a> LendingIteratorItem<'a> {
+pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
     fn next(&mut self) -> Option<Item<'_, Self>>;
 
     /// Like [`Iterator::take`], creates an iterator that yields the first `n` elements,
@@ -96,13 +96,28 @@ pub trait LendingIterator: for<'a> LendingIteratorItem<'a> {
         self.fold((), |(), item| f(item))
     }
 
-    /// Turns this `LendingIterator` into a regular [`Iterator`]
+    /// Turns this [`LendingIterator`] into a regular [`Iterator`],
+    /// if possible.
+    ///
+    /// This method is only available if the items returned
+    /// by the iterator are owned (i.e., if the iterator is
+    /// not really lending).
     fn into_iter<Item>(self) -> IntoIter<Self>
     where
-        Self: for<'any> LendingIteratorItem<'any, T = Item>,
+        Self: for<'any> LendingIteratorItem<'any, Type = Item>,
         Self: Sized,
     {
         IntoIter(self)
+    }
+
+    /// Turns this [`LendingIterator`] into a regular [`Iterator`]
+    /// by getting an owned version of the returned items via
+    /// the trait [`ToOwned`].
+    fn to_owned(self) -> IntoOwned<Self>
+    where
+        Self: Sized,
+    {
+        IntoOwned(self)
     }
 
     /// Like [`Iterator::enumerate`], creates an iterator which gives the current
@@ -122,8 +137,8 @@ pub struct Take<I: LendingIterator> {
     pub(crate) remaining: usize,
 }
 
-impl<'succ, I: LendingIterator> LendingIteratorItem<'succ> for Take<I> {
-    type T = <I as LendingIteratorItem<'succ>>::T;
+impl<'any, I: LendingIterator> LendingIteratorItem<'any> for Take<I> {
+    type Type = <I as LendingIteratorItem<'any>>::Type;
 }
 
 impl<I: LendingIterator> LendingIterator for Take<I> {
