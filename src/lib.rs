@@ -22,6 +22,7 @@ pub use self::traits::LendingIterator;
 pub use self::traits::LendingIteratorItem;
 
 /// A macro to iterate easily over an [`IntoLendingIterator`].
+///
 /// The syntax makes it possible to write loops such as
 /// ```ignore
 /// for_lend!{x in into_iter =>

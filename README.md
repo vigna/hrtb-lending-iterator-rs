@@ -29,3 +29,112 @@ The previous design proved to be too restrictive, and would have made it impossi
 write types such as `PermutedGraph` or `ArcListGraph` in 
 [the Rust port of webgraph](https://github.com/vigna/webgraph-rs/).
 
+Similarly to what happens with standard iterator, there is a [`IntoLendingIterator`] trait
+and methods such as [`LendingIterator::map`]. Our aim is to have a library as complete as that
+of standard iterators, but there is still a lot of work to do.
+
+The Rust syntax for iterating over types implementing [`IntoIterator`] cannot be extended
+to lending iterators. The idiomatic way of iterate over a lending iterator is to use
+a `while let` loop, as in:
+```ignore
+while let Some(item) = iter.next() {
+    // Do something with item
+}
+```
+Note that if you have a variable `x` with an `iter` method returning a lending iterator,
+you cannot use the form `while let Some(item) = x.iter().next()` as you will iterate
+over the first element forever.
+
+To make iteration simpler, we provide a macro [`for_lend!`] that can be used to iterate in a
+way more similar to a `for` loop.
+
+## Type-inference problems
+
+Note that due to the complex type dependencies, generic associated
+types and higher-kind trait bounds, the current Rust compiler cannot
+always infer the correct type of the associated iterator type
+and of the items it returns.
+In general, when writing methods accepting an [`IntoLendingIterator`]
+restricting with a *type* the item type will work, as in:
+
+```rust
+use hrtb_lending_iterator::*;
+
+struct MockLendingIterator {}
+
+impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
+    type T = &'a str;
+}
+
+impl LendingIterator for MockLendingIterator {
+    fn next(&mut self) -> Option<Item<'_, Self>> {
+        None
+    }
+}
+
+fn read_lend_iter<L>(iter: L)
+where
+    L: LendingIterator + for<'a> LendingIteratorItem<'a, T = &'a str>,
+{}
+
+fn test_mock_lend_iter(m: MockLendingIterator) {
+    read_lend_iter(m);
+}
+```
+
+However, the following code, which restricts the returned items using a trait bound,
+does not compile as of Rust 1.73.0:
+
+```ignore
+use hrtb_lending_iterator::*;
+
+struct MockLendingIterator {}
+
+impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
+    type T = &'a str;
+}
+
+impl LendingIterator for MockLendingIterator {
+    fn next(&mut self) -> Option<Item<'_, Self>> {
+        None
+    }
+}
+
+fn read_lend_iter<L>(iter: L)
+where
+    L: LendingIterator,
+    for<'a> <L as LendingIteratorItem<'a>>::T: AsRef<str>,
+{}
+
+fn test_mock_lend_iter(m: MockLendingIterator) {
+    read_lend_iter(&m);
+}
+```
+
+The workaround is to use an explicit type annotation:
+
+```rust
+use hrtb_lending_iterator::*;
+
+struct MockLendingIterator {}
+
+impl<'a> LendingIteratorItem<'a> for MockLendingIterator {
+    type T = &'a str;
+}
+
+impl LendingIterator for MockLendingIterator {
+    fn next(&mut self) -> Option<Item<'_, Self>> {
+        None
+    }
+}
+
+fn read_lend_iter<L>(iter: L)
+where
+    L: LendingIterator,
+    for<'a> <L as LendingIteratorItem<'a>>::T: AsRef<str>,
+{}
+
+fn test_mock_lend_iter(m: MockLendingIterator) {
+    read_lend_iter::<MockLendingIterator>(m);
+}
+```
