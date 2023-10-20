@@ -1,4 +1,4 @@
-## A lending iterator based on higher-rank trait bounds (HRTBs)
+## A lending iterator trait based on higher-rank trait bounds (HRTBs)
 
 A *lending iterator* is an iterator which lends mutable borrows to the items it returns.
 In particular, this means that the reference to an item is invalidated by the 
