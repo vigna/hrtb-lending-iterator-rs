@@ -54,12 +54,11 @@ way more similar to a `for` loop.
 
 ## Type-inference problems
 
-Note that due to the complex type dependencies, generic associated
-types and higher-kind trait bounds, the current Rust compiler cannot
-always infer the correct type of the associated iterator type
-and of the items it returns.
-In general, when writing methods accepting an [`IntoLendingIterator`]
-restricting the returned item with a *type* will work, as in:
+Due to the complex type dependencies and higher-kind trait bounds
+involved, the current Rust compiler cannot
+always infer the correct type of a lending iterator and of the items it returns.
+In general, when writing methods accepting a [`LendingIterator`]
+restricting the returned item type with a *type* will work, as in:
 
 ```rust
 use hrtb_lending_iterator::*;
