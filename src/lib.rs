@@ -11,10 +11,6 @@
 mod adapters;
 mod traits;
 
-pub use self::adapters::Enumerate;
-pub use self::adapters::Inspect;
-pub use self::adapters::IntoIter;
-pub use self::adapters::TakeWhile;
 pub use self::traits::ExactSizeLendingIterator;
 pub use self::traits::IntoLendingIterator;
 pub use self::traits::Item;
