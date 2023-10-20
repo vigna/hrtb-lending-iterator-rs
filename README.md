@@ -1,4 +1,4 @@
-## A lending iterator based on generic associated types and higher-rank trait bounds (HRTBs)
+## A lending iterator based on higher-rank trait bounds (HRTBs)
 
 A *lending iterator* is an iterator which lends mutable borrows to the items it returns.
 In particular, this means that the reference to an item is invalidated by the 
@@ -18,7 +18,7 @@ iterators on pairs with the same first coordinate without any copying; clearly, 
 The design of the lending iterator contained in this library was proposed by
 [Daniel Henry Mantilla](https://github.com/danielhenrymantilla/lending-iterator.rs/issues/13) and
 is similar to the design of his popular [lending-iterator](https://crates.io/crates/lending-iterator) 
-crate, but it uses generic associated types;
+crate, but it uses directly higher-rank trait bounds, rather than simulating them with macros;
 also [Yoav Tzfati](https://github.com/Crazytieguy/gat-lending-iterator/issues/12) participated to
 the discussion, providing information and code.
 
