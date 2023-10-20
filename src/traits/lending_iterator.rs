@@ -113,10 +113,9 @@ pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
     /// Turns this [`LendingIterator`] into a regular [`Iterator`]
     /// by getting an owned version of the returned items via
     /// the trait [`ToOwned`].
-    fn to_owned(self) -> IntoOwned<Self>
+    fn into_owned(self) -> IntoOwned<Self>
     where
         Self: Sized,
-        for<'any> <Self as LendingIteratorItem<'any>>::Type: ToOwned,
     {
         IntoOwned(self)
     }

@@ -6,7 +6,7 @@
 
 use crate::{Item, LendingIterator, LendingIteratorItem};
 
-/// This struct is returned by [`LendingIterator::enumerate`]
+/// This struct is returned by [`LendingIterator::enumerate`].
 #[derive(Clone, Debug)]
 pub struct Enumerate<I> {
     pub(crate) iter: I,

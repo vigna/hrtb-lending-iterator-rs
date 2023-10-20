@@ -7,7 +7,7 @@
 
 use crate::{LendingIterator, LendingIteratorItem};
 
-/// This struct is returned by [`LendingIterator::into_iter`]
+/// This struct is returned by [`LendingIterator::into_iter`].
 #[derive(Clone, Debug)]
 pub struct IntoIter<I: ?Sized + LendingIterator>(pub I);
 

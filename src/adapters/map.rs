@@ -7,7 +7,7 @@
 
 use crate::{Item, LendingIterator, LendingIteratorItem};
 
-/// This struct is returned by [`LendingIterator::map`]
+/// This struct is returned by [`LendingIterator::map`].
 #[derive(Clone, Debug)]
 pub struct Map<I: LendingIterator, F, NewItemType>
 where

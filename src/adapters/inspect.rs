@@ -7,7 +7,7 @@
 
 use crate::{Item, LendingIterator, LendingIteratorItem};
 
-/// This struct is returned by [`LendingIterator::inspect`]
+/// This struct is returned by [`LendingIterator::inspect`].
 #[derive(Clone, Debug)]
 pub struct Inspect<I: LendingIterator, F>
 where
