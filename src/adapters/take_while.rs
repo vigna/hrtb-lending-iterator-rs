@@ -8,7 +8,7 @@
 
 use crate::{Item, LendingIterator, LendingIteratorItem};
 
-/// This struct is returned by [`LendingIterator::map`]
+/// This struct is returned by [`LendingIterator::take_while`].
 #[derive(Clone, Debug)]
 pub struct TakeWhile<I: LendingIterator, F>
 where
