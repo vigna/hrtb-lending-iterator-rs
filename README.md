@@ -31,7 +31,7 @@ pub trait LendingIterator {
 ```
 The previous design proved to be too restrictive, as it would have made it impossible to
 write types such as `PermutedGraph` or `ArcListGraph` in 
-[the Rust port of webgraph](https://github.com/vigna/webgraph-rs/).
+[the Rust port of WebGraph](https://github.com/vigna/webgraph-rs/).
 
 Similarly to what happens with standard iterators, there is a [`IntoLendingIterator`] trait
 and methods such as [`LendingIterator::map`]. Our aim is to have a library as complete as that
