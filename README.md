@@ -2,10 +2,14 @@
 
 A *lending iterator* is an iterator which lends mutable borrows to the items it returns.
 In particular, this means that the reference to an item is invalidated by the 
-next call to `next()`. The typical example that cannot
-be written with standard Rust iterators, but is covered by lending iterator,
+next call to `next()`.
+
+The typical example that cannot
+be written with standard Rust iterators, but is covered by lending iterators,
 is that of an iterator returning mutable, overlapping windows
-of a slice. But lending iterators are more general than that, as they
+of a slice.
+
+But lending iterators are more general than that, as they
 might return items that depend on some mutable state stored in the iterator. For example,
 starting from an iterator on pairs of integers lexicographically sorted, a lending iterator might return
 iterators on pairs with the same first coordinate without any copying; clearly, any call on
@@ -25,7 +29,7 @@ pub trait LendingIterator {
     fn next(&mut self) -> Option<Self::Item<'_>>;
 }
 ```
-The previous design proved to be too restrictive, and would have made it impossible to
+The previous design proved to be too restrictive, as it would have made it impossible to
 write types such as `PermutedGraph` or `ArcListGraph` in 
 [the Rust port of webgraph](https://github.com/vigna/webgraph-rs/).
 
@@ -55,7 +59,7 @@ types and higher-kind trait bounds, the current Rust compiler cannot
 always infer the correct type of the associated iterator type
 and of the items it returns.
 In general, when writing methods accepting an [`IntoLendingIterator`]
-restricting with a *type* the item type will work, as in:
+restricting the returned item with a *type* will work, as in:
 
 ```rust
 use hrtb_lending_iterator::*;
