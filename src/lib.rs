@@ -11,8 +11,8 @@
 mod adapters;
 pub use self::adapters::from_into_iter;
 pub use self::adapters::from_iter;
-pub use self::adapters::IntoIteratorExt;
-pub use self::adapters::IteratorExt;
+
+mod sources;
 mod traits;
 
 pub use self::traits::ExactSizeLendingIterator;
@@ -21,8 +21,9 @@ pub use self::traits::Item;
 pub use self::traits::LendingIterator;
 pub use self::traits::LendingIteratorItem;
 
-#[macro_use]
-extern crate extension_traits;
+pub use self::traits::IntoIteratorExt;
+pub use self::traits::IteratorExt;
+pub use self::traits::SliceExt;
 
 /// A macro to iterate easily over an [`IntoLendingIterator`].
 ///

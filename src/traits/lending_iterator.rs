@@ -141,7 +141,7 @@ pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
     ///
     /// This method is only available if the type referred by
     /// the item type implements [`ToOwned`].
-    fn to_owned(self) -> ToOwnedItemIterator<Self>
+    fn to_owned_item(self) -> ToOwnedItemIterator<Self>
     where
         Self: Sized,
     {

@@ -46,12 +46,12 @@ pub trait IntoLendingIterator {
     }
 
     /// Turns this [`IntoLendingIterator`] into a regular [`IntoIterator`]
-    /// by applying [`LendingIterator::to_owned`] to the result
+    /// by applying [`LendingIterator::to_owned_item`] to the result
     /// of [`IntoLendingIterator::into_lend_iter`].
     ///
     /// This method is only available if the type referred by
     /// the item type implements [`ToOwned`].
-    fn to_into_owned(self) -> ToIntoOwnedItemIterator<Self>
+    fn to_into_owned_item(self) -> ToIntoOwnedItemIterator<Self>
     where
         Self: Sized,
     {

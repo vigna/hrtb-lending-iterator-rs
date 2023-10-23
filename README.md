@@ -87,7 +87,7 @@ enumerate just at most the first ten lines with
 Moreover, if at any time you decide that you prefer to handle owned strings, you have just
 to turn the lending iterator into a standard iterator by making the returned items owned:
 ```ignore
-    for line in iter.to_owned() {
+    for line in iter.to_owned_item() {
         // line is a copy of the buffer
         print!("{}", line);
     }
@@ -137,6 +137,21 @@ fn main() {
     }
 }
 ```
+In fact, this is already done for you using an [extension trait](SliceExt::windows_mut), so you can just use it:
+```rust
+use hrtb_lending_iterator::*;
+
+fn main() {
+    let mut v = vec![1, 2, 3, 4, 5];
+    let mut iter = v.windows_mut::<3>();
+    while let Some(window) = iter.next() {
+        // The window is mutable
+        window[0] = window[2] - window[1];
+        println!("{:?}", window);
+    }
+}
+```
+
 
 ## Interacting with standard iterators
 
@@ -155,7 +170,7 @@ from world of standard iterator to the world of lending iterators and vice versa
   the method [`LendingIterator::into_iter`] can be used to turn it into a lending iterator,
   and the same happens with [`IntoLendingIterator::into_into_iter`](crate::IntoLendingIterator::into_into_iter). These conversions happens without allocation, and are the inverses of the previous two.
 
-- The method [`LendingIterator::to_owned`] turns a lending iterator into a standard iterator
+- The method [`LendingIterator::to_owned_item`] turns a lending iterator into a standard iterator
   returning owned items. This is possible every time that the type referenced by the returned
   item implements [`ToOwned`](std::borrow::ToOwned). There will be allocation if the
   [`ToOwned::to_owned`] method allocates when applied to each item.

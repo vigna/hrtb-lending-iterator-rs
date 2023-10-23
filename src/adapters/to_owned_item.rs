@@ -34,6 +34,6 @@ where
     type IntoIter = ToOwnedItemIterator<I::IntoLendIter>;
 
     fn into_iter(self) -> Self::IntoIter {
-        LendingIterator::to_owned(self.0.into_lend_iter())
+        self.0.into_lend_iter().to_owned_item()
     }
 }

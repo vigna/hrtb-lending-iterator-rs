@@ -34,6 +34,9 @@ impl<I: IntoIterator> IntoLendingIterator for FromIntoIterator<I> {
 ///
 /// This is always possible. Note that his operation and
 /// [`LendingIterator::into_iter`] are mutually inverse.
+///
+/// This function can be more conveniently accessed using the
+/// [`IteratorExt::into_lend_iter`] method.
 pub fn from_iter<I: Iterator>(iter: I) -> FromIterator<I> {
     FromIterator(iter)
 }
@@ -72,6 +75,10 @@ impl<I: Iterator> LendingIterator for FromIterator<I> {
 ///
 /// This is always possible. Note that his operation and
 /// [`IntoLendingIterator::into_into_iter`] are mutually inverse.
+///
+/// This function can be more conveniently accessed using the
+/// [`IntoIteratorExt::into_into_lend_iter`] method.
+
 pub fn from_into_iter<I: IntoIterator>(iter: I) -> FromIntoIterator<I> {
     FromIntoIterator(iter)
 }

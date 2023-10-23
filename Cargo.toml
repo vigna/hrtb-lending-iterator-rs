@@ -9,6 +9,3 @@ readme = "README.md"
 keywords = ["iterator"]
 categories = ["data-structures"]
 authors = ["Tommaso Fontana <tommaso.fontana.96@gmail.com>", "Valentin Lorentz <valentin.lorentz@inria.fr>", "Sebastiano Vigna <sebastiano.vigna@unimi.it>"]
-
-[dependencies]
-extension-traits = "1.0.1"

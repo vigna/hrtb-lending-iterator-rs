@@ -12,3 +12,8 @@ pub use into_lending::IntoLendingIterator;
 
 mod lending_iterator;
 pub use lending_iterator::{Item, LendingIterator, LendingIteratorItem};
+
+mod ext;
+pub use ext::IntoIteratorExt;
+pub use ext::IteratorExt;
+pub use ext::SliceExt;
