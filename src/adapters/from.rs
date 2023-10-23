@@ -52,15 +52,6 @@ impl<I: Iterator> FromIterator<I> {
     }
 }
 
-impl<T, I: Iterator<Item = T>> From<I> for FromIterator<I>
-where
-    for<'any> I: LendingIteratorItem<'any, Type = T>,
-{
-    fn from(iter: I) -> Self {
-        FromIterator(iter.into_iter())
-    }
-}
-
 impl<'any, I: Iterator> LendingIteratorItem<'any> for FromIterator<I> {
     type Type = I::Item;
 }
