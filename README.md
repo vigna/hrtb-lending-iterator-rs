@@ -10,10 +10,11 @@ is that of an iterator returning mutable, overlapping windows
 of a slice.
 
 But lending iterators are more general than that, as they
-might return items that depend on some mutable state stored in the iterator. For example,
-starting from an iterator on pairs of integers lexicographically sorted, a lending iterator might return
-iterators on pairs with the same first coordinate without any copying; clearly, any call on
-`next()` would invalidate the reference returned by the previous call.
+might return items that depend on some mutable state stored in the iterator. For example, a
+lending iterator might return references to the lines of a file reusing an internal buffer;
+also, starting from an iterator on pairs of integers lexicographically sorted, a lending iterator might return
+iterators on pairs with the same first coordinate without any copying; clearly, in all these cases
+any call on `next()` would invalidate the reference returned by the previous call.
 
 Similarly to what happens with standard iterators, besides the fundamental [`LendingIterator`] trait 
 there is a [`IntoLendingIterator`] trait
@@ -142,18 +143,17 @@ fn main() {
 The library provides several methods that make it possible to move
 from world of standard iterator to the world of lending iterators and vice versa.
 
-- If a lending iterator is actually a standard iterator because there is no actual borrow,
-  the method [`LendingIterator::into_iter`] can be used to turn it into a lending iterator,
-  and the same happens with [`IntoLendingIterator::into_into_iter`](crate::IntoLendingIterator::into_into_iter). These conversions happen without allocation.
-
-- All types implementing [`Iterator`] can be turned into lending iterators
-  by calling the method [`Iterator::into_lend_iter`](IteratorExt::into_lend_iter), and all types implementing
-  [`IntoLendingIterator`](crate::IntoLendingIterator) can be turned into standard iterators by calling the method
-  [`IntoIterator::into_into_lend_iter`](IntoIteratorExt::into_into_lend_iter).
+- All types implementing [`Iterator`] can be turned into a [`LendingIterator`]
+  by calling the method [`Iterator::into_lend_iter`](IteratorExt::into_lend_iter),
+  and all types implementing [`IntoIterator`] can be turned into a [`IntoLendingIterator`]
+  by calling the method [`IntoIterator::into_into_lend_iter`](IntoIteratorExt::into_into_lend_iter).
   This is achieved via trait extension, but the methods are
   also available as free functions [`from_iter`](crate::from_iter) and
-  [`from_into_iter`](crate::from_into_iter). These conversions happens without
-  allocation, and are the inverses of the previous two.
+  [`from_into_iter`](crate::from_into_iter). These conversions happen without allocation.
+
+- If a lending iterator is actually a standard iterator because there is no actual borrow,
+  the method [`LendingIterator::into_iter`] can be used to turn it into a lending iterator,
+  and the same happens with [`IntoLendingIterator::into_into_iter`](crate::IntoLendingIterator::into_into_iter). These conversions happens without allocation, and are the inverses of the previous two.
 
 - The method [`LendingIterator::to_owned`] turns a lending iterator into a standard iterator
   returning owned items. This is possible every time that the type referenced by the returned
