@@ -71,7 +71,7 @@ fn test_to_owned_item_string() {
     impl<R: BufRead> LendingIterator for Lines<R> {
         fn next(&mut self) -> Option<Item<'_, Self>> {
             self.buffer.clear();
-            if self.reader.read_line(&mut self.buffer).ok()? == 0 {
+            if self.reader.read_line(&mut self.buffer).unwrap() == 0 {
                 return None;
             }
             Some(&self.buffer)

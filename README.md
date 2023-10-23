@@ -57,7 +57,7 @@ impl<'any> LendingIteratorItem<'any> for Lines {
 impl LendingIterator for Lines {
     fn next(&mut self) -> Option<Item<'_, Self>> {
         self.buffer.clear();
-        if self.reader.read_line(&mut self.buffer).ok()? == 0 {
+        if self.reader.read_line(&mut self.buffer).unwrap() == 0 {
             return None;
         }
         Some(&self.buffer)
