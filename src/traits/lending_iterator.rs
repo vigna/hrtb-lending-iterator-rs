@@ -31,7 +31,9 @@ type of items returned by the iterator, via higher-kind trait bounds.
 This design was proposed
 [Daniel Henry Mantilla](https://github.com/danielhenrymantilla/lending-iterator.rs/issues/13) and
 is similar to the design of his popular [lending-iterator](https://crates.io/crates/lending-iterator)
-crate, but it uses directly higher-rank trait bounds, rather than simulating them with macros.
+crate, but it uses directly higher-rank trait bounds, rather than simulating them with macros. It is also
+similar, with minor syntactic differences, to the design of the [lender](https://crates.io/crates/lender)
+crate, which was in turn inspired by this [post by Sabrina Jewson](https://sabrinajewson.org/blog/the-better-alternative-to-lifetime-gats).
 
 Note that the design is significantly more complex than the “obvious” lending iterator
 ```rust
