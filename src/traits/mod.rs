@@ -7,8 +7,8 @@
 mod exact_size;
 pub use exact_size::ExactSizeLendingIterator;
 
-mod into;
-pub use into::IntoLendingIterator;
+mod into_lending;
+pub use into_lending::IntoLendingIterator;
 
 mod lending_iterator;
 pub use lending_iterator::{Item, LendingIterator, LendingIteratorItem};

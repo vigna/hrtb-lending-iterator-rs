@@ -19,12 +19,147 @@ pub trait LendingIteratorItem<'any, WhereSelfOutlivesAny = &'any Self> {
 /// A readable shorthand for the type of the items of a [`LendingIterator`] `I`.
 pub type Item<'any, I> = <I as LendingIteratorItem<'any>>::Type;
 
-/// The main trait: an iterator that borrows its items mutably from
-/// `self`, which implies that you cannot own at the same time two returned
-/// items.
-///
-/// The trait depends on the trait [LendingIteratorItem], which specifies the
-/// type of items returned by the iterator, via higher-kind trait bounds.
+/**
+
+The main trait: an iterator that borrows its items mutably from
+`self`, which implies that you cannot own at the same time two returned
+items.
+
+The trait depends on the trait [LendingIteratorItem], which specifies the
+type of items returned by the iterator, via higher-kind trait bounds.
+
+This design was proposed
+[Daniel Henry Mantilla](https://github.com/danielhenrymantilla/lending-iterator.rs/issues/13) and
+is similar to the design of his popular [lending-iterator](https://crates.io/crates/lending-iterator)
+crate, but it uses directly higher-rank trait bounds, rather than simulating them with macros.
+
+Note that the design is significantly more complex than the “obvious” lending iterator
+```rust
+pub trait LendingIterator {
+    type Item<'a> where Self: 'a;
+    fn next(&mut self) -> Option<Self::Item<'_>>;
+}
+```
+The previous design proved to be too restrictive, as it would have made it impossible to
+write types such as `PermutedGraph` or `ArcListGraph` in
+[the Rust port of WebGraph](https://github.com/vigna/webgraph-rs/).
+
+## Interacting with standard iterators
+
+The library provides several methods that make it possible to move
+from world of standard iterator to the world of lending iterators and vice versa.
+
+- If a lending iterator is actually a standard iterator because there is no actual borrow,
+  the method [`LendingIterator::into_iter`] can be used to turn it into a lending iterator,
+  and the same happens with [`IntoLendingIterator::into_into_iter`](crate::IntoLendingIterator::into_into_iter). This conversions
+  happen without allocation.
+
+- All types implementing [`Iterator`] can be turned into lending iterators
+  by calling the method [`Iterator::into_lend_iter`](IteratorExt::into_lend_iter), and all types implementing
+  [`IntoLendingIterator`](crate::IntoLendingIterator) can be turned into standard iterators by calling the method
+  [`IntoIterator::into_into_lend_iter`](IntoIteratorExt::into_into_lend_iter).
+  This is achieved via trait extension, but the methods are
+  also available as free functions [`from_iter`](crate::from_iter) and
+  [`from_into_iter`](crate::from_into_iter). This conversions happens without
+  allocation, and are the inverses of the previous two.
+
+- The method [`LendingIterator::to_owned`] turns a lending iterator into a standard iterator
+  returning owned items. This is possible every time that the type referenced by the returned
+  item implements [`ToOwned`](std::borrow::ToOwned). There will be allocation if the
+  [`ToOwned::to_owned`] method allocates when applied to each item.
+
+## Type-inference problems
+
+Due to the complex type dependencies and higher-kind trait bounds
+involved, the current Rust compiler cannot
+always infer the correct type of a lending iterator and of the items it returns.
+In general, when writing methods accepting a [`LendingIterator`]
+restricting the returned item type with a *type* will work, as in:
+
+```rust
+use hrtb_lending_iterator::*;
+
+struct MockLendingIterator {}
+
+impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+    type Type = &'any str;
+}
+
+impl LendingIterator for MockLendingIterator {
+    fn next(&mut self) -> Option<Item<'_, Self>> {
+        None
+    }
+}
+
+fn read_lend_iter<L>(iter: L)
+where
+    L: LendingIterator + for<'any> LendingIteratorItem<'any, Type = &'any str>,
+{}
+
+fn test_mock_lend_iter(m: MockLendingIterator) {
+    read_lend_iter(m);
+}
+```
+
+However, the following code, which restricts the returned items using a trait bound,
+does not compile as of Rust 1.73.0:
+
+```ignore
+use hrtb_lending_iterator::*;
+
+struct MockLendingIterator {}
+
+impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+    type Type = &'any str;
+}
+
+impl LendingIterator for MockLendingIterator {
+    fn next(&mut self) -> Option<Item<'_, Self>> {
+        None
+    }
+}
+
+fn read_lend_iter<L>(iter: L)
+where
+    L: LendingIterator,
+    for<'any> <L as LendingIteratorItem<'any>>::Type: AsRef<str>,
+{}
+
+fn test_mock_lend_iter(m: MockLendingIterator) {
+    read_lend_iter(&m);
+}
+```
+
+The workaround is to use an explicit type annotation:
+
+```rust
+use hrtb_lending_iterator::*;
+
+struct MockLendingIterator {}
+
+impl<'any> LendingIteratorItem<'any> for MockLendingIterator {
+    type Type = &'any str;
+}
+
+impl LendingIterator for MockLendingIterator {
+    fn next(&mut self) -> Option<Item<'_, Self>> {
+        None
+    }
+}
+
+fn read_lend_iter<L>(iter: L)
+where
+    L: LendingIterator,
+    for<'any> <L as LendingIteratorItem<'any>>::Type: AsRef<str>,
+{}
+
+fn test_mock_lend_iter(m: MockLendingIterator) {
+    read_lend_iter::<MockLendingIterator>(m);
+}
+```
+
+*/
+
 pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
     fn next(&mut self) -> Option<Item<'_, Self>>;
 
@@ -97,11 +232,14 @@ pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
     }
 
     /// Turns this [`LendingIterator`] into a regular [`Iterator`],
-    /// if possible.
+    /// if possible, without allocating.
     ///
     /// This method is only available if the items returned
     /// by the iterator are owned (i.e., if the iterator is
     /// not really lending).
+    ///
+    /// Note that this method and [`crate::IteratorExt::into_lend_iter`] are
+    /// mutually inverse.
     fn into_iter<Item>(self) -> IntoIter<Self>
     where
         Self: for<'any> LendingIteratorItem<'any, Type = Item>,
@@ -112,12 +250,15 @@ pub trait LendingIterator: for<'any> LendingIteratorItem<'any> {
 
     /// Turns this [`LendingIterator`] into a regular [`Iterator`]
     /// by getting an owned version of the returned items via
-    /// the trait [`ToOwned`].
-    fn into_owned(self) -> IntoOwned<Self>
+    /// [`ToOwned`].
+    ///
+    /// This method is only available if the type referred by
+    /// the item type implements [`ToOwned`].
+    fn to_owned(self) -> ToOwnedItemIterator<Self>
     where
         Self: Sized,
     {
-        IntoOwned(self)
+        ToOwnedItemIterator(self)
     }
 
     /// Like [`Iterator::enumerate`], creates an iterator which gives the current
