@@ -1,3 +1,9 @@
+# WARNING
+
+Halfway through the development of this crate we learned about [Lender](https://crates.io/crates/lender),
+which has exactly the same goals of this crate, uses the same ideas, and is much more developed, so
+we joined the development team. This crate is thus unmaintained and this document is here for historical reasons only.
+
 ## A lending iterator trait based on higher-rank trait bounds (HRTBs)
 
 A *lending iterator* is an iterator which lends mutable borrows to the items it returns.
